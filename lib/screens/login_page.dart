@@ -12,6 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   LoginController _loginController = LoginController();
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
+  bool _show = false;
 
   @override
   void dispose() {
@@ -23,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("Buillllllllllllllllld");
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -34,10 +36,24 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _username,
                 ),
-                TextFormField(
-                  controller: _password,
-                  obscureText: true,
-                ),
+                StreamBuilder<bool>(
+                    initialData: _loginController.show,
+                    stream: _loginController.getShow,
+                    builder: (context, snapshot) {
+                      return TextFormField(
+                        controller: _password,
+                        obscureText: !snapshot.data,
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                          icon: Icon(snapshot.data
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            _loginController.setShow();
+                          },
+                        )),
+                      );
+                    }),
                 ElevatedButton(
                     onPressed: () {
                       _login();
@@ -68,7 +84,10 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Error", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
+                  Text(
+                    "Error",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
                   Text(message)
                 ],
               ),
