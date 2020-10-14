@@ -8,6 +8,16 @@ class SingUpPage extends StatefulWidget {
 }
 
 class _SingUpPageState extends State<SingUpPage> {
+  String idToken = "";
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +53,9 @@ class _SingUpPageState extends State<SingUpPage> {
               try {
                 final google = await _googleSignIn.signIn();
                 final token = await google.authentication;
-                print(token.accessToken);
+                print(token.idToken);
+                print(token.idToken.length);
+                _controller.text = token.idToken;
               } catch (error) {
                 print("and error");
                 print(error);
@@ -51,6 +63,9 @@ class _SingUpPageState extends State<SingUpPage> {
               }
             },
           ),
+          TextFormField(
+            controller: _controller,
+          )
         ],
       ),
     ));

@@ -2,8 +2,28 @@ import 'dart:async';
 
 import 'package:capacitacionflutter2/core/network.dart';
 import 'package:capacitacionflutter2/models/post.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SearchControllerRx {
+  BehaviorSubject<String> _searchController = BehaviorSubject<String>();
+
+  Stream<String> get getSearch => _searchController.stream;
+
+  String get search => _searchController.value;
+
+  set search(String q) => _searchController.sink.add(q);
+
+  BehaviorSubject<String> _searchController2 = BehaviorSubject<String>();
+
+  Stream<String> get getSearch2 => _searchController2.stream;
+
+  SearchControllerRx() {
+    _searchController.debounceTime(Duration(milliseconds: 300)).listen((event) {
+      print("$event");
+      _searchController2.add(event);
+    });
+  }
+
   StreamController<List<Post>> _streamController =
       StreamController<List<Post>>();
 
@@ -23,5 +43,7 @@ class SearchControllerRx {
 
   void dispose() {
     _streamController.close();
+    _searchController.close();
+    _searchController2.close();
   }
 }
